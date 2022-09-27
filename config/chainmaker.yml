@@ -1,0 +1,148 @@
+auth_type: "permissionedWithCert"
+
+log:
+  config_file: ../config/log.yml
+
+crypto_engine: tencentsm #support gmssl, tencentsm and tjfoc
+
+blockchain:
+  - chainId: chain1
+    genesis: ../config/chainconfig/bc1.yml
+  - chainId: chain2
+    genesis: ../config/chainconfig/bc2.yml
+node:
+  org_id: wangjunjie.github.io
+  priv_key_file: ../config/certs/node/consensus1.sign.key
+  cert_file: ../config/certs/node/consensus1.sign.crt
+  signer_cache_size: 1000
+  cert_cache_size: 1000
+
+  fast_sync:
+    enabled: true
+    min_full_blocks: 10
+
+  pkcs11:
+    enabled: false
+    library: ""
+    label: ""
+    password: ""
+    session_cache_size: 10
+    hash: SHA256
+
+net:
+  provider: LibP2P
+  listen_addr: /ip4/0.0.0.0/tcp/11301
+  seeds:
+    - /ip4/127.0.0.1/tcp/11301/p2p/QmTJv9G34QfjwpsDzN6ueSosB9i1LJJDLe6xp71nxYRyxr
+  tls:
+    enabled: true
+    priv_key_file: ../config/certs/node/consensus1.tls.key
+    cert_file: ../config/certs/node/consensus1.tls.crt
+
+txpool:
+  pool_type: "single"
+  max_txpool_size: 50000
+  max_config_txpool_size: 10
+  full_notify_again_time: 30
+  batch_max_size: 30000
+  batch_create_timeout: 200
+
+rpc:
+  provider: grpc
+  port: 12301
+  check_chain_conf_trust_roots_change_interval: 60
+  ratelimit:
+    enabled: false
+    token_per_second: -1
+    token_bucket_size: -1
+  subscriber:
+    ratelimit:
+      token_per_second: 100
+      token_bucket_size: 100
+  tls:
+    mode: twoway
+    priv_key_file: ../config/certs/node/consensus1.tls.key
+    cert_file: ../config/certs/node/consensus1.tls.crt
+  max_send_msg_size: 100
+  max_recv_msg_size: 100
+
+monitor:
+  enabled: true
+  port: 14321
+pprof:
+  enabled: false
+  port: 24321
+
+storage:
+  store_path: ../data/consensus1/ledgerData1
+  unarchive_block_height: 300000
+  disable_block_file_db: false
+  logdb_segment_async: false
+  logdb_segment_size: 128
+
+  enable_bigfilter: false    #default false
+  bigfilter_config:
+    redis_hosts_port: "127.0.0.1:6300,127.0.0.1:6301"   #redis host:port
+    redis_password: abcpass  #redis password
+    tx_capacity: 1000000000   #support max transaction capacity
+    fp_rate: 0.000000001      #false postive rate
+
+  enable_rwc: true   #default false
+  # suggest
+  # if block_tx_capacity < 10000,
+  # set rolling_window_cache_capacity greater than block_tx_capacity*1.1 and less than block_tx_capacity*2
+  # if block_tx_capacity > 10000,  set rolling_window_cache_capacity 20000
+  rolling_window_cache_capacity: 200
+
+  write_block_type: 0
+  disable_state_cache: false
+  state_cache_config:
+    life_window: 3000000000000
+    clean_window: 1000000000
+    max_entry_size: 500
+    hard_max_cache_size: 10240
+
+  blockdb_config:
+    provider: leveldb
+    leveldb_config:
+      store_path: ../data/consensus1/block
+  statedb_config:
+    provider: leveldb
+    leveldb_config:
+      store_path: ../data/consensus1/state
+  historydb_config:
+    provider: leveldb
+    disable_key_history: false
+    disable_contract_history: true
+    disable_account_history: true
+    leveldb_config:
+      store_path: ../data/consensus1/history
+  resultdb_config:
+    provider: leveldb
+    leveldb_config:
+      store_path: ../data/consensus1/result
+  disable_contract_eventdb: true
+  contract_eventdb_config:
+    provider: sql
+    sqldb_config:
+      sqldb_type: mysql
+      dsn: root:password@tcp(127.0.0.1:3306)/
+
+scheduler:
+  rwset_log: false
+
+vm:
+  enable_dockervm: false
+  dockervm_container_name: dockergovm-consensus1
+  dockervm_mount_path: ../data/consensus1/docker-go
+  dockervm_log_path: ../log/consensus1/docker-go
+  log_in_console: true
+  log_level: DEBUG
+  uds_open: true
+  docker_vm_host: 127.0.0.1
+  docker_vm_port: 22351
+  user_num: 1000
+  time_limit: 8
+  max_send_msg_size: 50
+  max_recv_msg_size: 50
+  max_connection: 50

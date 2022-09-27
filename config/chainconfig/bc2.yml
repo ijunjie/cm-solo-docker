@@ -1,0 +1,62 @@
+chain_id: chain2
+version: v2.2.1
+sequence: 1
+auth_type: "permissionedWithCert"
+crypto:
+  hash: SM3
+contract:
+  enable_sql_support: false
+
+vm:
+  addr_type: 0
+  support_list:
+    - "wasmer"
+    - "gasm"
+    - "evm"
+    - "dockergo"
+    - "wxvm"
+
+block:
+  tx_timestamp_verify: true
+  tx_timeout: 600
+  block_tx_capacity: 100
+  block_size: 100
+  block_interval: 2000
+core:
+  tx_scheduler_timeout: 10
+  tx_scheduler_validate_timeout: 10
+  enable_sender_group: false
+  enable_conflicts_bit_window: true
+snapshot:
+  enable_evidence: false
+scheduler:
+  enable_evidence: false
+consensus:
+  type: 0
+  nodes:
+    - org_id: wangjunjie.github.io
+      node_id:
+        - QmTJv9G34QfjwpsDzN6ueSosB9i1LJJDLe6xp71nxYRyxr
+  ext_config:
+    - key: chainname
+      value: chain2
+  dpos_config: []
+
+trust_roots:
+  - org_id: wangjunjie.github.io
+    root:
+      - ../config/certs/ca/ca.crt
+
+resource_policies:
+  - resource_name: CHAIN_CONFIG-TRUST_ROOT_ADD
+    policy:
+      rule: ANY
+      org_list:
+      role_list:
+        - admin
+  - resource_name: CHAIN_CONFIG-CERTS_FREEZE
+    policy:
+      rule: ANY
+      org_list:
+      role_list:
+        - admin
